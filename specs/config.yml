@@ -1,0 +1,38 @@
+provider:
+  name: aifabrics
+
+data_sources:
+  app_group:
+    read:
+      path: /apps/aifabrics.eda.nokia.com
+      method: GET
+
+  backend:
+    read:
+      path: /apps/aifabrics.eda.nokia.com/v1alpha1/namespaces/{namespace}/backends/{name}
+      method: GET
+
+  backend_list:
+    read:
+      path: /apps/aifabrics.eda.nokia.com/v1alpha1/namespaces/{namespace}/backends
+      method: GET
+
+  resource_list:
+    read:
+      path: /apps/aifabrics.eda.nokia.com/v1alpha1
+      method: GET
+
+resources:
+  backend:
+    create:
+      path: /apps/aifabrics.eda.nokia.com/v1alpha1/namespaces/{namespace}/backends
+      method: POST
+    read:
+      path: /apps/aifabrics.eda.nokia.com/v1alpha1/namespaces/{namespace}/backends/{name}
+      method: GET
+    update:
+      path: /apps/aifabrics.eda.nokia.com/v1alpha1/namespaces/{namespace}/backends/{name}
+      method: PUT
+    delete:
+      path: /apps/aifabrics.eda.nokia.com/v1alpha1/namespaces/{namespace}/backends/{name}
+      method: DELETE
