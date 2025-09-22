@@ -48,7 +48,7 @@ Optional:
 Required:
 
 - `gpu_isolation_groups` (Attributes List) GPU Isolation Groups are used to isolate GPU traffic over the network, GPUs in different GPU isolation groups will not be able to communicate with each other.  If all GPUs across all stripes need to be able to communicate with each other, create a single GPUIsolationGroup selecting all GPU facing interfaces. (see [below for nested schema](#nestedatt--spec--gpu_isolation_groups))
-- `rocev2qo_s` (Attributes) Set of properties to configure the RoCEv2 QoS. (see [below for nested schema](#nestedatt--spec--rocev2qo_s))
+- `rocev2_qos` (Attributes) Set of properties to configure the RoCEv2 QoS. (see [below for nested schema](#nestedatt--spec--rocev2_qos))
 - `stripes` (Attributes List) A list of stripes, stripes contain a set of nodes (rails). (see [below for nested schema](#nestedatt--spec--stripes))
 
 Optional:
@@ -66,8 +66,8 @@ Required:
 - `name` (String) Name of the IsolationGroup.
 
 
-<a id="nestedatt--spec--rocev2qo_s"></a>
-### Nested Schema for `spec.rocev2qo_s`
+<a id="nestedatt--spec--rocev2_qos"></a>
+### Nested Schema for `spec.rocev2_qos`
 
 Optional:
 
@@ -120,19 +120,19 @@ Optional:
 - `health_score_reason` (String) Indicates the reason for the health score.
 - `last_change` (String) The time when the state of the resource last changed.
 - `operational_state` (String) Operational state of the Fabric.  The operational state of the fabric is determined by monitoring the operational state of the following resources (if applicable): DefaultRouters, ISLs.
-- `stripe_connector_1` (Attributes) Stripe connector in the Backend. (see [below for nested schema](#nestedatt--status--stripe_connector_1))
-- `stripes_1` (Attributes List) List of stripes in the Backend. (see [below for nested schema](#nestedatt--status--stripes_1))
+- `stripe_connector` (Attributes) Stripe connector in the Backend. (see [below for nested schema](#nestedatt--status--stripe_connector))
+- `stripes` (Attributes List) List of stripes in the Backend. (see [below for nested schema](#nestedatt--status--stripes))
 
-<a id="nestedatt--status--stripe_connector_1"></a>
-### Nested Schema for `status.stripe_connector_1`
+<a id="nestedatt--status--stripe_connector"></a>
+### Nested Schema for `status.stripe_connector`
 
 Optional:
 
 - `name` (String) The name of the Stripe Connector.
-- `stripe_connector_nodes` (Attributes List) List of stripe connector nodes in the Stripe. (see [below for nested schema](#nestedatt--status--stripe_connector_1--stripe_connector_nodes))
+- `stripe_connector_nodes` (Attributes List) List of stripe connector nodes in the Stripe. (see [below for nested schema](#nestedatt--status--stripe_connector--stripe_connector_nodes))
 
-<a id="nestedatt--status--stripe_connector_1--stripe_connector_nodes"></a>
-### Nested Schema for `status.stripe_connector_1.stripe_connector_nodes`
+<a id="nestedatt--status--stripe_connector--stripe_connector_nodes"></a>
+### Nested Schema for `status.stripe_connector.stripe_connector_nodes`
 
 Optional:
 
@@ -142,16 +142,16 @@ Optional:
 
 
 
-<a id="nestedatt--status--stripes_1"></a>
-### Nested Schema for `status.stripes_1`
+<a id="nestedatt--status--stripes"></a>
+### Nested Schema for `status.stripes`
 
 Optional:
 
-- `leaf_nodes` (Attributes List) List of leaf nodes in the Stripe. (see [below for nested schema](#nestedatt--status--stripes_1--leaf_nodes))
+- `leaf_nodes` (Attributes List) List of leaf nodes in the Stripe. (see [below for nested schema](#nestedatt--status--stripes--leaf_nodes))
 - `name` (String) The name of the Stripe.
 
-<a id="nestedatt--status--stripes_1--leaf_nodes"></a>
-### Nested Schema for `status.stripes_1.leaf_nodes`
+<a id="nestedatt--status--stripes--leaf_nodes"></a>
+### Nested Schema for `status.stripes.leaf_nodes`
 
 Optional:
 

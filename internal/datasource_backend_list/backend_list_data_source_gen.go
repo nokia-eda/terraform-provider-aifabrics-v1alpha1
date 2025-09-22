@@ -96,7 +96,7 @@ func BackendListDataSourceSchema(ctx context.Context) schema.Schema {
 									Description:         "GPU Isolation Groups are used to isolate GPU traffic over the network, GPUs in different GPU isolation groups will not be able to communicate with each other.  If all GPUs across all stripes need to be able to communicate with each other, create a single GPUIsolationGroup selecting all GPU facing interfaces.",
 									MarkdownDescription: "GPU Isolation Groups are used to isolate GPU traffic over the network, GPUs in different GPU isolation groups will not be able to communicate with each other.  If all GPUs across all stripes need to be able to communicate with each other, create a single GPUIsolationGroup selecting all GPU facing interfaces.",
 								},
-								"rocev2qo_s": schema.SingleNestedAttribute{
+								"rocev2_qos": schema.SingleNestedAttribute{
 									Attributes: map[string]schema.Attribute{
 										"ecn_max_drop_probability_percent": schema.Int64Attribute{
 											Optional:            true,
@@ -129,9 +129,9 @@ func BackendListDataSourceSchema(ctx context.Context) schema.Schema {
 											MarkdownDescription: "Maximum amount of shared buffer memory available to the queue in bytes.",
 										},
 									},
-									CustomType: Rocev2qoSType{
+									CustomType: Rocev2QosType{
 										ObjectType: types.ObjectType{
-											AttrTypes: Rocev2qoSValue{}.AttributeTypes(ctx),
+											AttrTypes: Rocev2QosValue{}.AttributeTypes(ctx),
 										},
 									},
 									Optional:            true,
@@ -259,7 +259,7 @@ func BackendListDataSourceSchema(ctx context.Context) schema.Schema {
 									Description:         "Operational state of the Fabric.  The operational state of the fabric is determined by monitoring the operational state of the following resources (if applicable): DefaultRouters, ISLs.",
 									MarkdownDescription: "Operational state of the Fabric.  The operational state of the fabric is determined by monitoring the operational state of the following resources (if applicable): DefaultRouters, ISLs.",
 								},
-								"stripe_connector_1": schema.SingleNestedAttribute{
+								"stripe_connector": schema.SingleNestedAttribute{
 									Attributes: map[string]schema.Attribute{
 										"name": schema.StringAttribute{
 											Computed:            true,
@@ -305,7 +305,7 @@ func BackendListDataSourceSchema(ctx context.Context) schema.Schema {
 									Description:         "Stripe connector in the Backend.",
 									MarkdownDescription: "Stripe connector in the Backend.",
 								},
-								"stripes_1": schema.ListNestedAttribute{
+								"stripes": schema.ListNestedAttribute{
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"leaf_nodes": schema.ListNestedAttribute{
@@ -375,7 +375,7 @@ func BackendListDataSourceSchema(ctx context.Context) schema.Schema {
 			"kind": schema.StringAttribute{
 				Computed: true,
 			},
-			"labelselector": schema.StringAttribute{
+			"label_selector": schema.StringAttribute{
 				Optional:            true,
 				Computed:            true,
 				Description:         "a label selector string to filter the results based on CR labels",
@@ -396,7 +396,7 @@ type BackendListModel struct {
 	Filter        types.String `tfsdk:"filter"`
 	Items         types.List   `tfsdk:"items"`
 	Kind          types.String `tfsdk:"kind"`
-	Labelselector types.String `tfsdk:"labelselector"`
+	LabelSelector types.String `tfsdk:"label_selector"`
 	Namespace     types.String `tfsdk:"namespace"`
 }
 
@@ -1637,22 +1637,22 @@ func (t SpecType) ValueFromObject(ctx context.Context, in basetypes.ObjectValue)
 			fmt.Sprintf(`gpu_isolation_groups expected to be basetypes.ListValue, was: %T`, gpuIsolationGroupsAttribute))
 	}
 
-	rocev2qoSAttribute, ok := attributes["rocev2qo_s"]
+	rocev2QosAttribute, ok := attributes["rocev2_qos"]
 
 	if !ok {
 		diags.AddError(
 			"Attribute Missing",
-			`rocev2qo_s is missing from object`)
+			`rocev2_qos is missing from object`)
 
 		return nil, diags
 	}
 
-	rocev2qoSVal, ok := rocev2qoSAttribute.(basetypes.ObjectValue)
+	rocev2QosVal, ok := rocev2QosAttribute.(basetypes.ObjectValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`rocev2qo_s expected to be basetypes.ObjectValue, was: %T`, rocev2qoSAttribute))
+			fmt.Sprintf(`rocev2_qos expected to be basetypes.ObjectValue, was: %T`, rocev2QosAttribute))
 	}
 
 	stripeConnectorAttribute, ok := attributes["stripe_connector"]
@@ -1716,7 +1716,7 @@ func (t SpecType) ValueFromObject(ctx context.Context, in basetypes.ObjectValue)
 	return SpecValue{
 		AsnPool:            asnPoolVal,
 		GpuIsolationGroups: gpuIsolationGroupsVal,
-		Rocev2qoS:          rocev2qoSVal,
+		Rocev2Qos:          rocev2QosVal,
 		StripeConnector:    stripeConnectorVal,
 		Stripes:            stripesVal,
 		SystemPoolIpv4:     systemPoolIpv4Val,
@@ -1823,22 +1823,22 @@ func NewSpecValue(attributeTypes map[string]attr.Type, attributes map[string]att
 			fmt.Sprintf(`gpu_isolation_groups expected to be basetypes.ListValue, was: %T`, gpuIsolationGroupsAttribute))
 	}
 
-	rocev2qoSAttribute, ok := attributes["rocev2qo_s"]
+	rocev2QosAttribute, ok := attributes["rocev2_qos"]
 
 	if !ok {
 		diags.AddError(
 			"Attribute Missing",
-			`rocev2qo_s is missing from object`)
+			`rocev2_qos is missing from object`)
 
 		return NewSpecValueUnknown(), diags
 	}
 
-	rocev2qoSVal, ok := rocev2qoSAttribute.(basetypes.ObjectValue)
+	rocev2QosVal, ok := rocev2QosAttribute.(basetypes.ObjectValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`rocev2qo_s expected to be basetypes.ObjectValue, was: %T`, rocev2qoSAttribute))
+			fmt.Sprintf(`rocev2_qos expected to be basetypes.ObjectValue, was: %T`, rocev2QosAttribute))
 	}
 
 	stripeConnectorAttribute, ok := attributes["stripe_connector"]
@@ -1902,7 +1902,7 @@ func NewSpecValue(attributeTypes map[string]attr.Type, attributes map[string]att
 	return SpecValue{
 		AsnPool:            asnPoolVal,
 		GpuIsolationGroups: gpuIsolationGroupsVal,
-		Rocev2qoS:          rocev2qoSVal,
+		Rocev2Qos:          rocev2QosVal,
 		StripeConnector:    stripeConnectorVal,
 		Stripes:            stripesVal,
 		SystemPoolIpv4:     systemPoolIpv4Val,
@@ -1980,7 +1980,7 @@ var _ basetypes.ObjectValuable = SpecValue{}
 type SpecValue struct {
 	AsnPool            basetypes.StringValue `tfsdk:"asn_pool"`
 	GpuIsolationGroups basetypes.ListValue   `tfsdk:"gpu_isolation_groups"`
-	Rocev2qoS          basetypes.ObjectValue `tfsdk:"rocev2qo_s"`
+	Rocev2Qos          basetypes.ObjectValue `tfsdk:"rocev2_qos"`
 	StripeConnector    basetypes.ObjectValue `tfsdk:"stripe_connector"`
 	Stripes            basetypes.ListValue   `tfsdk:"stripes"`
 	SystemPoolIpv4     basetypes.StringValue `tfsdk:"system_pool_ipv4"`
@@ -1997,8 +1997,8 @@ func (v SpecValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) 
 	attrTypes["gpu_isolation_groups"] = basetypes.ListType{
 		ElemType: GpuIsolationGroupsValue{}.Type(ctx),
 	}.TerraformType(ctx)
-	attrTypes["rocev2qo_s"] = basetypes.ObjectType{
-		AttrTypes: Rocev2qoSValue{}.AttributeTypes(ctx),
+	attrTypes["rocev2_qos"] = basetypes.ObjectType{
+		AttrTypes: Rocev2QosValue{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
 	attrTypes["stripe_connector"] = basetypes.ObjectType{
 		AttrTypes: StripeConnectorValue{}.AttributeTypes(ctx),
@@ -2030,13 +2030,13 @@ func (v SpecValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) 
 
 		vals["gpu_isolation_groups"] = val
 
-		val, err = v.Rocev2qoS.ToTerraformValue(ctx)
+		val, err = v.Rocev2Qos.ToTerraformValue(ctx)
 
 		if err != nil {
 			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
 		}
 
-		vals["rocev2qo_s"] = val
+		vals["rocev2_qos"] = val
 
 		val, err = v.StripeConnector.ToTerraformValue(ctx)
 
@@ -2120,24 +2120,24 @@ func (v SpecValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, di
 		)
 	}
 
-	var rocev2qoS basetypes.ObjectValue
+	var rocev2Qos basetypes.ObjectValue
 
-	if v.Rocev2qoS.IsNull() {
-		rocev2qoS = types.ObjectNull(
-			Rocev2qoSValue{}.AttributeTypes(ctx),
+	if v.Rocev2Qos.IsNull() {
+		rocev2Qos = types.ObjectNull(
+			Rocev2QosValue{}.AttributeTypes(ctx),
 		)
 	}
 
-	if v.Rocev2qoS.IsUnknown() {
-		rocev2qoS = types.ObjectUnknown(
-			Rocev2qoSValue{}.AttributeTypes(ctx),
+	if v.Rocev2Qos.IsUnknown() {
+		rocev2Qos = types.ObjectUnknown(
+			Rocev2QosValue{}.AttributeTypes(ctx),
 		)
 	}
 
-	if !v.Rocev2qoS.IsNull() && !v.Rocev2qoS.IsUnknown() {
-		rocev2qoS = types.ObjectValueMust(
-			Rocev2qoSValue{}.AttributeTypes(ctx),
-			v.Rocev2qoS.Attributes(),
+	if !v.Rocev2Qos.IsNull() && !v.Rocev2Qos.IsUnknown() {
+		rocev2Qos = types.ObjectValueMust(
+			Rocev2QosValue{}.AttributeTypes(ctx),
+			v.Rocev2Qos.Attributes(),
 		)
 	}
 
@@ -2196,8 +2196,8 @@ func (v SpecValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, di
 		"gpu_isolation_groups": basetypes.ListType{
 			ElemType: GpuIsolationGroupsValue{}.Type(ctx),
 		},
-		"rocev2qo_s": basetypes.ObjectType{
-			AttrTypes: Rocev2qoSValue{}.AttributeTypes(ctx),
+		"rocev2_qos": basetypes.ObjectType{
+			AttrTypes: Rocev2QosValue{}.AttributeTypes(ctx),
 		},
 		"stripe_connector": basetypes.ObjectType{
 			AttrTypes: StripeConnectorValue{}.AttributeTypes(ctx),
@@ -2221,7 +2221,7 @@ func (v SpecValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, di
 		map[string]attr.Value{
 			"asn_pool":             v.AsnPool,
 			"gpu_isolation_groups": gpuIsolationGroups,
-			"rocev2qo_s":           rocev2qoS,
+			"rocev2_qos":           rocev2Qos,
 			"stripe_connector":     stripeConnector,
 			"stripes":              stripes,
 			"system_pool_ipv4":     v.SystemPoolIpv4,
@@ -2253,7 +2253,7 @@ func (v SpecValue) Equal(o attr.Value) bool {
 		return false
 	}
 
-	if !v.Rocev2qoS.Equal(other.Rocev2qoS) {
+	if !v.Rocev2Qos.Equal(other.Rocev2Qos) {
 		return false
 	}
 
@@ -2286,8 +2286,8 @@ func (v SpecValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 		"gpu_isolation_groups": basetypes.ListType{
 			ElemType: GpuIsolationGroupsValue{}.Type(ctx),
 		},
-		"rocev2qo_s": basetypes.ObjectType{
-			AttrTypes: Rocev2qoSValue{}.AttributeTypes(ctx),
+		"rocev2_qos": basetypes.ObjectType{
+			AttrTypes: Rocev2QosValue{}.AttributeTypes(ctx),
 		},
 		"stripe_connector": basetypes.ObjectType{
 			AttrTypes: StripeConnectorValue{}.AttributeTypes(ctx),
@@ -2705,14 +2705,14 @@ func (v GpuIsolationGroupsValue) AttributeTypes(ctx context.Context) map[string]
 	}
 }
 
-var _ basetypes.ObjectTypable = Rocev2qoSType{}
+var _ basetypes.ObjectTypable = Rocev2QosType{}
 
-type Rocev2qoSType struct {
+type Rocev2QosType struct {
 	basetypes.ObjectType
 }
 
-func (t Rocev2qoSType) Equal(o attr.Type) bool {
-	other, ok := o.(Rocev2qoSType)
+func (t Rocev2QosType) Equal(o attr.Type) bool {
+	other, ok := o.(Rocev2QosType)
 
 	if !ok {
 		return false
@@ -2721,11 +2721,11 @@ func (t Rocev2qoSType) Equal(o attr.Type) bool {
 	return t.ObjectType.Equal(other.ObjectType)
 }
 
-func (t Rocev2qoSType) String() string {
-	return "Rocev2qoSType"
+func (t Rocev2QosType) String() string {
+	return "Rocev2QosType"
 }
 
-func (t Rocev2qoSType) ValueFromObject(ctx context.Context, in basetypes.ObjectValue) (basetypes.ObjectValuable, diag.Diagnostics) {
+func (t Rocev2QosType) ValueFromObject(ctx context.Context, in basetypes.ObjectValue) (basetypes.ObjectValuable, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	attributes := in.Attributes()
@@ -2842,7 +2842,7 @@ func (t Rocev2qoSType) ValueFromObject(ctx context.Context, in basetypes.ObjectV
 		return nil, diags
 	}
 
-	return Rocev2qoSValue{
+	return Rocev2QosValue{
 		EcnMaxDropProbabilityPercent: ecnMaxDropProbabilityPercentVal,
 		EcnSlopeMaxThresholdPercent:  ecnSlopeMaxThresholdPercentVal,
 		EcnSlopeMinThresholdPercent:  ecnSlopeMinThresholdPercentVal,
@@ -2853,19 +2853,19 @@ func (t Rocev2qoSType) ValueFromObject(ctx context.Context, in basetypes.ObjectV
 	}, diags
 }
 
-func NewRocev2qoSValueNull() Rocev2qoSValue {
-	return Rocev2qoSValue{
+func NewRocev2QosValueNull() Rocev2QosValue {
+	return Rocev2QosValue{
 		state: attr.ValueStateNull,
 	}
 }
 
-func NewRocev2qoSValueUnknown() Rocev2qoSValue {
-	return Rocev2qoSValue{
+func NewRocev2QosValueUnknown() Rocev2QosValue {
+	return Rocev2QosValue{
 		state: attr.ValueStateUnknown,
 	}
 }
 
-func NewRocev2qoSValue(attributeTypes map[string]attr.Type, attributes map[string]attr.Value) (Rocev2qoSValue, diag.Diagnostics) {
+func NewRocev2QosValue(attributeTypes map[string]attr.Type, attributes map[string]attr.Value) (Rocev2QosValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	// Reference: https://github.com/hashicorp/terraform-plugin-framework/issues/521
@@ -2876,11 +2876,11 @@ func NewRocev2qoSValue(attributeTypes map[string]attr.Type, attributes map[strin
 
 		if !ok {
 			diags.AddError(
-				"Missing Rocev2qoSValue Attribute Value",
-				"While creating a Rocev2qoSValue value, a missing attribute value was detected. "+
-					"A Rocev2qoSValue must contain values for all attributes, even if null or unknown. "+
+				"Missing Rocev2QosValue Attribute Value",
+				"While creating a Rocev2QosValue value, a missing attribute value was detected. "+
+					"A Rocev2QosValue must contain values for all attributes, even if null or unknown. "+
 					"This is always an issue with the provider and should be reported to the provider developers.\n\n"+
-					fmt.Sprintf("Rocev2qoSValue Attribute Name (%s) Expected Type: %s", name, attributeType.String()),
+					fmt.Sprintf("Rocev2QosValue Attribute Name (%s) Expected Type: %s", name, attributeType.String()),
 			)
 
 			continue
@@ -2888,12 +2888,12 @@ func NewRocev2qoSValue(attributeTypes map[string]attr.Type, attributes map[strin
 
 		if !attributeType.Equal(attribute.Type(ctx)) {
 			diags.AddError(
-				"Invalid Rocev2qoSValue Attribute Type",
-				"While creating a Rocev2qoSValue value, an invalid attribute value was detected. "+
-					"A Rocev2qoSValue must use a matching attribute type for the value. "+
+				"Invalid Rocev2QosValue Attribute Type",
+				"While creating a Rocev2QosValue value, an invalid attribute value was detected. "+
+					"A Rocev2QosValue must use a matching attribute type for the value. "+
 					"This is always an issue with the provider and should be reported to the provider developers.\n\n"+
-					fmt.Sprintf("Rocev2qoSValue Attribute Name (%s) Expected Type: %s\n", name, attributeType.String())+
-					fmt.Sprintf("Rocev2qoSValue Attribute Name (%s) Given Type: %s", name, attribute.Type(ctx)),
+					fmt.Sprintf("Rocev2QosValue Attribute Name (%s) Expected Type: %s\n", name, attributeType.String())+
+					fmt.Sprintf("Rocev2QosValue Attribute Name (%s) Given Type: %s", name, attribute.Type(ctx)),
 			)
 		}
 	}
@@ -2903,17 +2903,17 @@ func NewRocev2qoSValue(attributeTypes map[string]attr.Type, attributes map[strin
 
 		if !ok {
 			diags.AddError(
-				"Extra Rocev2qoSValue Attribute Value",
-				"While creating a Rocev2qoSValue value, an extra attribute value was detected. "+
-					"A Rocev2qoSValue must not contain values beyond the expected attribute types. "+
+				"Extra Rocev2QosValue Attribute Value",
+				"While creating a Rocev2QosValue value, an extra attribute value was detected. "+
+					"A Rocev2QosValue must not contain values beyond the expected attribute types. "+
 					"This is always an issue with the provider and should be reported to the provider developers.\n\n"+
-					fmt.Sprintf("Extra Rocev2qoSValue Attribute Name: %s", name),
+					fmt.Sprintf("Extra Rocev2QosValue Attribute Name: %s", name),
 			)
 		}
 	}
 
 	if diags.HasError() {
-		return NewRocev2qoSValueUnknown(), diags
+		return NewRocev2QosValueUnknown(), diags
 	}
 
 	ecnMaxDropProbabilityPercentAttribute, ok := attributes["ecn_max_drop_probability_percent"]
@@ -2923,7 +2923,7 @@ func NewRocev2qoSValue(attributeTypes map[string]attr.Type, attributes map[strin
 			"Attribute Missing",
 			`ecn_max_drop_probability_percent is missing from object`)
 
-		return NewRocev2qoSValueUnknown(), diags
+		return NewRocev2QosValueUnknown(), diags
 	}
 
 	ecnMaxDropProbabilityPercentVal, ok := ecnMaxDropProbabilityPercentAttribute.(basetypes.Int64Value)
@@ -2941,7 +2941,7 @@ func NewRocev2qoSValue(attributeTypes map[string]attr.Type, attributes map[strin
 			"Attribute Missing",
 			`ecn_slope_max_threshold_percent is missing from object`)
 
-		return NewRocev2qoSValueUnknown(), diags
+		return NewRocev2QosValueUnknown(), diags
 	}
 
 	ecnSlopeMaxThresholdPercentVal, ok := ecnSlopeMaxThresholdPercentAttribute.(basetypes.Int64Value)
@@ -2959,7 +2959,7 @@ func NewRocev2qoSValue(attributeTypes map[string]attr.Type, attributes map[strin
 			"Attribute Missing",
 			`ecn_slope_min_threshold_percent is missing from object`)
 
-		return NewRocev2qoSValueUnknown(), diags
+		return NewRocev2QosValueUnknown(), diags
 	}
 
 	ecnSlopeMinThresholdPercentVal, ok := ecnSlopeMinThresholdPercentAttribute.(basetypes.Int64Value)
@@ -2977,7 +2977,7 @@ func NewRocev2qoSValue(attributeTypes map[string]attr.Type, attributes map[strin
 			"Attribute Missing",
 			`pfc_deadlock_detection_timer is missing from object`)
 
-		return NewRocev2qoSValueUnknown(), diags
+		return NewRocev2QosValueUnknown(), diags
 	}
 
 	pfcDeadlockDetectionTimerVal, ok := pfcDeadlockDetectionTimerAttribute.(basetypes.Int64Value)
@@ -2995,7 +2995,7 @@ func NewRocev2qoSValue(attributeTypes map[string]attr.Type, attributes map[strin
 			"Attribute Missing",
 			`pfc_deadlock_recovery_timer is missing from object`)
 
-		return NewRocev2qoSValueUnknown(), diags
+		return NewRocev2QosValueUnknown(), diags
 	}
 
 	pfcDeadlockRecoveryTimerVal, ok := pfcDeadlockRecoveryTimerAttribute.(basetypes.Int64Value)
@@ -3013,7 +3013,7 @@ func NewRocev2qoSValue(attributeTypes map[string]attr.Type, attributes map[strin
 			"Attribute Missing",
 			`queue_maximum_burst_size is missing from object`)
 
-		return NewRocev2qoSValueUnknown(), diags
+		return NewRocev2QosValueUnknown(), diags
 	}
 
 	queueMaximumBurstSizeVal, ok := queueMaximumBurstSizeAttribute.(basetypes.Int64Value)
@@ -3025,10 +3025,10 @@ func NewRocev2qoSValue(attributeTypes map[string]attr.Type, attributes map[strin
 	}
 
 	if diags.HasError() {
-		return NewRocev2qoSValueUnknown(), diags
+		return NewRocev2QosValueUnknown(), diags
 	}
 
-	return Rocev2qoSValue{
+	return Rocev2QosValue{
 		EcnMaxDropProbabilityPercent: ecnMaxDropProbabilityPercentVal,
 		EcnSlopeMaxThresholdPercent:  ecnSlopeMaxThresholdPercentVal,
 		EcnSlopeMinThresholdPercent:  ecnSlopeMinThresholdPercentVal,
@@ -3039,8 +3039,8 @@ func NewRocev2qoSValue(attributeTypes map[string]attr.Type, attributes map[strin
 	}, diags
 }
 
-func NewRocev2qoSValueMust(attributeTypes map[string]attr.Type, attributes map[string]attr.Value) Rocev2qoSValue {
-	object, diags := NewRocev2qoSValue(attributeTypes, attributes)
+func NewRocev2QosValueMust(attributeTypes map[string]attr.Type, attributes map[string]attr.Value) Rocev2QosValue {
+	object, diags := NewRocev2QosValue(attributeTypes, attributes)
 
 	if diags.HasError() {
 		// This could potentially be added to the diag package.
@@ -3054,15 +3054,15 @@ func NewRocev2qoSValueMust(attributeTypes map[string]attr.Type, attributes map[s
 				diagnostic.Detail()))
 		}
 
-		panic("NewRocev2qoSValueMust received error(s): " + strings.Join(diagsStrings, "\n"))
+		panic("NewRocev2QosValueMust received error(s): " + strings.Join(diagsStrings, "\n"))
 	}
 
 	return object
 }
 
-func (t Rocev2qoSType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
+func (t Rocev2QosType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
 	if in.Type() == nil {
-		return NewRocev2qoSValueNull(), nil
+		return NewRocev2QosValueNull(), nil
 	}
 
 	if !in.Type().Equal(t.TerraformType(ctx)) {
@@ -3070,11 +3070,11 @@ func (t Rocev2qoSType) ValueFromTerraform(ctx context.Context, in tftypes.Value)
 	}
 
 	if !in.IsKnown() {
-		return NewRocev2qoSValueUnknown(), nil
+		return NewRocev2QosValueUnknown(), nil
 	}
 
 	if in.IsNull() {
-		return NewRocev2qoSValueNull(), nil
+		return NewRocev2QosValueNull(), nil
 	}
 
 	attributes := map[string]attr.Value{}
@@ -3097,16 +3097,16 @@ func (t Rocev2qoSType) ValueFromTerraform(ctx context.Context, in tftypes.Value)
 		attributes[k] = a
 	}
 
-	return NewRocev2qoSValueMust(Rocev2qoSValue{}.AttributeTypes(ctx), attributes), nil
+	return NewRocev2QosValueMust(Rocev2QosValue{}.AttributeTypes(ctx), attributes), nil
 }
 
-func (t Rocev2qoSType) ValueType(ctx context.Context) attr.Value {
-	return Rocev2qoSValue{}
+func (t Rocev2QosType) ValueType(ctx context.Context) attr.Value {
+	return Rocev2QosValue{}
 }
 
-var _ basetypes.ObjectValuable = Rocev2qoSValue{}
+var _ basetypes.ObjectValuable = Rocev2QosValue{}
 
-type Rocev2qoSValue struct {
+type Rocev2QosValue struct {
 	EcnMaxDropProbabilityPercent basetypes.Int64Value `tfsdk:"ecn_max_drop_probability_percent"`
 	EcnSlopeMaxThresholdPercent  basetypes.Int64Value `tfsdk:"ecn_slope_max_threshold_percent"`
 	EcnSlopeMinThresholdPercent  basetypes.Int64Value `tfsdk:"ecn_slope_min_threshold_percent"`
@@ -3116,7 +3116,7 @@ type Rocev2qoSValue struct {
 	state                        attr.ValueState
 }
 
-func (v Rocev2qoSValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
+func (v Rocev2QosValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
 	attrTypes := make(map[string]tftypes.Type, 6)
 
 	var val tftypes.Value
@@ -3197,19 +3197,19 @@ func (v Rocev2qoSValue) ToTerraformValue(ctx context.Context) (tftypes.Value, er
 	}
 }
 
-func (v Rocev2qoSValue) IsNull() bool {
+func (v Rocev2QosValue) IsNull() bool {
 	return v.state == attr.ValueStateNull
 }
 
-func (v Rocev2qoSValue) IsUnknown() bool {
+func (v Rocev2QosValue) IsUnknown() bool {
 	return v.state == attr.ValueStateUnknown
 }
 
-func (v Rocev2qoSValue) String() string {
-	return "Rocev2qoSValue"
+func (v Rocev2QosValue) String() string {
+	return "Rocev2QosValue"
 }
 
-func (v Rocev2qoSValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
+func (v Rocev2QosValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	attributeTypes := map[string]attr.Type{
@@ -3243,8 +3243,8 @@ func (v Rocev2qoSValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValu
 	return objVal, diags
 }
 
-func (v Rocev2qoSValue) Equal(o attr.Value) bool {
-	other, ok := o.(Rocev2qoSValue)
+func (v Rocev2QosValue) Equal(o attr.Value) bool {
+	other, ok := o.(Rocev2QosValue)
 
 	if !ok {
 		return false
@@ -3285,15 +3285,15 @@ func (v Rocev2qoSValue) Equal(o attr.Value) bool {
 	return true
 }
 
-func (v Rocev2qoSValue) Type(ctx context.Context) attr.Type {
-	return Rocev2qoSType{
+func (v Rocev2QosValue) Type(ctx context.Context) attr.Type {
+	return Rocev2QosType{
 		basetypes.ObjectType{
 			AttrTypes: v.AttributeTypes(ctx),
 		},
 	}
 }
 
-func (v Rocev2qoSValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
+func (v Rocev2QosValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 	return map[string]attr.Type{
 		"ecn_max_drop_probability_percent": basetypes.Int64Type{},
 		"ecn_slope_max_threshold_percent":  basetypes.Int64Type{},
@@ -4639,7 +4639,7 @@ func (t StatusType) ValueFromObject(ctx context.Context, in basetypes.ObjectValu
 			fmt.Sprintf(`operational_state expected to be basetypes.StringValue, was: %T`, operationalStateAttribute))
 	}
 
-	stripeConnector1Attribute, ok := attributes["stripe_connector_1"]
+	stripeConnector1Attribute, ok := attributes["stripe_connector"]
 
 	if !ok {
 		diags.AddError(
@@ -4657,7 +4657,7 @@ func (t StatusType) ValueFromObject(ctx context.Context, in basetypes.ObjectValu
 			fmt.Sprintf(`stripe_connector_1 expected to be basetypes.ObjectValue, was: %T`, stripeConnector1Attribute))
 	}
 
-	stripes1Attribute, ok := attributes["stripes_1"]
+	stripes1Attribute, ok := attributes["stripes"]
 
 	if !ok {
 		diags.AddError(
@@ -4825,7 +4825,7 @@ func NewStatusValue(attributeTypes map[string]attr.Type, attributes map[string]a
 			fmt.Sprintf(`operational_state expected to be basetypes.StringValue, was: %T`, operationalStateAttribute))
 	}
 
-	stripeConnector1Attribute, ok := attributes["stripe_connector_1"]
+	stripeConnector1Attribute, ok := attributes["stripe_connector"]
 
 	if !ok {
 		diags.AddError(
@@ -4843,7 +4843,7 @@ func NewStatusValue(attributeTypes map[string]attr.Type, attributes map[string]a
 			fmt.Sprintf(`stripe_connector_1 expected to be basetypes.ObjectValue, was: %T`, stripeConnector1Attribute))
 	}
 
-	stripes1Attribute, ok := attributes["stripes_1"]
+	stripes1Attribute, ok := attributes["stripes"]
 
 	if !ok {
 		diags.AddError(
@@ -4948,8 +4948,8 @@ type StatusValue struct {
 	HealthScoreReason basetypes.StringValue `tfsdk:"health_score_reason"`
 	LastChange        basetypes.StringValue `tfsdk:"last_change"`
 	OperationalState  basetypes.StringValue `tfsdk:"operational_state"`
-	StripeConnector1  basetypes.ObjectValue `tfsdk:"stripe_connector_1"`
-	Stripes1          basetypes.ListValue   `tfsdk:"stripes_1"`
+	StripeConnector1  basetypes.ObjectValue `tfsdk:"stripe_connector"`
+	Stripes1          basetypes.ListValue   `tfsdk:"stripes"`
 	state             attr.ValueState
 }
 
@@ -4963,10 +4963,10 @@ func (v StatusValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error
 	attrTypes["health_score_reason"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["last_change"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["operational_state"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["stripe_connector_1"] = basetypes.ObjectType{
+	attrTypes["stripe_connector"] = basetypes.ObjectType{
 		AttrTypes: StripeConnector1Value{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
-	attrTypes["stripes_1"] = basetypes.ListType{
+	attrTypes["stripes"] = basetypes.ListType{
 		ElemType: Stripes1Value{}.Type(ctx),
 	}.TerraformType(ctx)
 
@@ -5014,7 +5014,7 @@ func (v StatusValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error
 			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
 		}
 
-		vals["stripe_connector_1"] = val
+		vals["stripe_connector"] = val
 
 		val, err = v.Stripes1.ToTerraformValue(ctx)
 
@@ -5022,7 +5022,7 @@ func (v StatusValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error
 			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
 		}
 
-		vals["stripes_1"] = val
+		vals["stripes"] = val
 
 		if err := tftypes.ValidateValue(objectType, vals); err != nil {
 			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
@@ -5108,10 +5108,10 @@ func (v StatusValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, 
 		"health_score_reason": basetypes.StringType{},
 		"last_change":         basetypes.StringType{},
 		"operational_state":   basetypes.StringType{},
-		"stripe_connector_1": basetypes.ObjectType{
+		"stripe_connector": basetypes.ObjectType{
 			AttrTypes: StripeConnector1Value{}.AttributeTypes(ctx),
 		},
-		"stripes_1": basetypes.ListType{
+		"stripes": basetypes.ListType{
 			ElemType: Stripes1Value{}.Type(ctx),
 		},
 	}
@@ -5131,8 +5131,8 @@ func (v StatusValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, 
 			"health_score_reason": v.HealthScoreReason,
 			"last_change":         v.LastChange,
 			"operational_state":   v.OperationalState,
-			"stripe_connector_1":  stripeConnector1,
-			"stripes_1":           stripes1,
+			"stripe_connector":    stripeConnector1,
+			"stripes":             stripes1,
 		})
 
 	return objVal, diags
@@ -5194,10 +5194,10 @@ func (v StatusValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 		"health_score_reason": basetypes.StringType{},
 		"last_change":         basetypes.StringType{},
 		"operational_state":   basetypes.StringType{},
-		"stripe_connector_1": basetypes.ObjectType{
+		"stripe_connector": basetypes.ObjectType{
 			AttrTypes: StripeConnector1Value{}.AttributeTypes(ctx),
 		},
-		"stripes_1": basetypes.ListType{
+		"stripes": basetypes.ListType{
 			ElemType: Stripes1Value{}.Type(ctx),
 		},
 	}

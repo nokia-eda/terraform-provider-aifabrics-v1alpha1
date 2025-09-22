@@ -23,7 +23,7 @@ description: |-
 
 - `fields` (String) a comma-separated list of resource fields to fetch/return.  If unspecified, all fields are fetched.  If empty, only key-fields are fetched.
 - `filter` (String) an EQL "where" expression that will be used to filter the set of resources returned.
-- `labelselector` (String) a label selector string to filter the results based on CR labels
+- `label_selector` (String) a label selector string to filter the results based on CR labels
 
 ### Read-Only
 
@@ -52,7 +52,7 @@ Optional:
 
 - `asn_pool` (String) Reference to an IndexAllocationPool pool to use for Autonomous System Number allocations.  Used when eBGP is configured as an underlay protocol.
 - `gpu_isolation_groups` (Attributes List) GPU Isolation Groups are used to isolate GPU traffic over the network, GPUs in different GPU isolation groups will not be able to communicate with each other.  If all GPUs across all stripes need to be able to communicate with each other, create a single GPUIsolationGroup selecting all GPU facing interfaces. (see [below for nested schema](#nestedatt--items--spec--gpu_isolation_groups))
-- `rocev2qo_s` (Attributes) Set of properties to configure the RoCEv2 QoS. (see [below for nested schema](#nestedatt--items--spec--rocev2qo_s))
+- `rocev2_qos` (Attributes) Set of properties to configure the RoCEv2 QoS. (see [below for nested schema](#nestedatt--items--spec--rocev2_qos))
 - `stripe_connector` (Attributes) StripeConnector is the spine layer interconnecting multiple stripes. (see [below for nested schema](#nestedatt--items--spec--stripe_connector))
 - `stripes` (Attributes List) A list of stripes, stripes contain a set of nodes (rails). (see [below for nested schema](#nestedatt--items--spec--stripes))
 - `system_pool_ipv4` (String) Reference to an IPAllocationPool used to dynamically allocate an IPv4 address to system/lo0 interfaces.  If specified under the Leaf/Spine/Superspine/Borderleaf those will take precedence.
@@ -66,8 +66,8 @@ Optional:
 - `name` (String) Name of the IsolationGroup.
 
 
-<a id="nestedatt--items--spec--rocev2qo_s"></a>
-### Nested Schema for `items.spec.rocev2qo_s`
+<a id="nestedatt--items--spec--rocev2_qos"></a>
+### Nested Schema for `items.spec.rocev2_qos`
 
 Optional:
 
@@ -125,19 +125,19 @@ Read-Only:
 - `health_score_reason` (String) Indicates the reason for the health score.
 - `last_change` (String) The time when the state of the resource last changed.
 - `operational_state` (String) Operational state of the Fabric.  The operational state of the fabric is determined by monitoring the operational state of the following resources (if applicable): DefaultRouters, ISLs.
-- `stripe_connector_1` (Attributes) Stripe connector in the Backend. (see [below for nested schema](#nestedatt--items--status--stripe_connector_1))
-- `stripes_1` (Attributes List) List of stripes in the Backend. (see [below for nested schema](#nestedatt--items--status--stripes_1))
+- `stripe_connector` (Attributes) Stripe connector in the Backend. (see [below for nested schema](#nestedatt--items--status--stripe_connector))
+- `stripes` (Attributes List) List of stripes in the Backend. (see [below for nested schema](#nestedatt--items--status--stripes))
 
-<a id="nestedatt--items--status--stripe_connector_1"></a>
-### Nested Schema for `items.status.stripe_connector_1`
+<a id="nestedatt--items--status--stripe_connector"></a>
+### Nested Schema for `items.status.stripe_connector`
 
 Read-Only:
 
 - `name` (String) The name of the Stripe Connector.
-- `stripe_connector_nodes` (Attributes List) List of stripe connector nodes in the Stripe. (see [below for nested schema](#nestedatt--items--status--stripe_connector_1--stripe_connector_nodes))
+- `stripe_connector_nodes` (Attributes List) List of stripe connector nodes in the Stripe. (see [below for nested schema](#nestedatt--items--status--stripe_connector--stripe_connector_nodes))
 
-<a id="nestedatt--items--status--stripe_connector_1--stripe_connector_nodes"></a>
-### Nested Schema for `items.status.stripe_connector_1.stripe_connector_nodes`
+<a id="nestedatt--items--status--stripe_connector--stripe_connector_nodes"></a>
+### Nested Schema for `items.status.stripe_connector.stripe_connector_nodes`
 
 Read-Only:
 
@@ -147,16 +147,16 @@ Read-Only:
 
 
 
-<a id="nestedatt--items--status--stripes_1"></a>
-### Nested Schema for `items.status.stripes_1`
+<a id="nestedatt--items--status--stripes"></a>
+### Nested Schema for `items.status.stripes`
 
 Read-Only:
 
-- `leaf_nodes` (Attributes List) List of leaf nodes in the Stripe. (see [below for nested schema](#nestedatt--items--status--stripes_1--leaf_nodes))
+- `leaf_nodes` (Attributes List) List of leaf nodes in the Stripe. (see [below for nested schema](#nestedatt--items--status--stripes--leaf_nodes))
 - `name` (String) The name of the Stripe.
 
-<a id="nestedatt--items--status--stripes_1--leaf_nodes"></a>
-### Nested Schema for `items.status.stripes_1.leaf_nodes`
+<a id="nestedatt--items--status--stripes--leaf_nodes"></a>
+### Nested Schema for `items.status.stripes.leaf_nodes`
 
 Read-Only:
 
